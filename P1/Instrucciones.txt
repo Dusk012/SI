@@ -1,0 +1,10 @@
+1. Descargar la carpeta P1 desde PACV
+2. En la carpeta de P1, extraer los dos .zip
+3. Hacer pull a todo el archivo P1
+
+Explicacion: En el gitignore solo estan los .py que editaremos
+ pero hay has cosas como librerias que no se han subido al git
+
+ Para ejecutar:
+ 1. Doble click a BattleCity.exe
+ 2. Usando P1 como carpeta raiz, ejecutar MainReactiveAgent.py
