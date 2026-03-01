@@ -1,19 +1,28 @@
 from Agent.BaseAgent import BaseAgent
 from StateMachine.StateMachine import StateMachine
 from States.GoToCommandCenter import GoToCommandCenter
+from States.Explorar import Explorar
+from States.Disparar import Disparar
+from States.Esquivar import Esquivar
+from States.BuscarSalida import BuscarSalida
 
 
 class ReactiveAgent(BaseAgent):
     def __init__(self, id, name):
         super().__init__(id, name)
+
         dictionary = {
-        "GoToCommandCenter" : GoToCommandCenter("GoToCommandCenter")
+            "Explorar": Explorar("Explorar"),
+            "Disparar": Disparar("Disparar"),
+            "Esquivar": Esquivar("Esquivar"),
+            "BuscarSalida": BuscarSalida("BuscarSalida")
         }
-        self.stateMachine = StateMachine("ReactiveBehavior",dictionary,"GoToCommandCenter")
+
+        self.stateMachine = StateMachine("ReactiveBehavior", dictionary, "Explorar")
 
     #Metodo que se llama al iniciar el agente. No devuelve nada y sirve para contruir el agente
     def Start(self):
-        print("Inicio del agente ")
+        print("Inicio del agente " + self.name)
         self.stateMachine.Start(self)
 
     #Metodo que se llama en cada actualización del agente, y se proporciona le vector de percepciones
