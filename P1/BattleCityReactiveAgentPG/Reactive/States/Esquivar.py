@@ -72,7 +72,10 @@ class Esquivar(State):
         ]
 
         if AgentConsts.SHELL in entorno:
-            return self.id
+            if perception[AgentConsts.CAN_FIRE] == 1:
+                return "Disparar"
+            else:
+                return self.id
         
         if AgentConsts.PLAYER in entorno or AgentConsts.COMMAND_CENTER in entorno:
             return "Disparar"

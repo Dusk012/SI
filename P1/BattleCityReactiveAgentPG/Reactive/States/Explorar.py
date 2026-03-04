@@ -14,35 +14,45 @@ class Explorar(State):
 
     def Update(self, perception, map, agent):
         obstaculos = [
-            AgentConsts.UNBREAKABLE,
-            AgentConsts.BRICK,
+            AgentConsts.UNBREAKABLE, 
+            AgentConsts.BRICK, 
             AgentConsts.COMMAND_CENTER,
             AgentConsts.SEMI_UNBREKABLE,
             AgentConsts.SEMI_BREKABLE
         ]
+        
+        distancias = {
+            AgentConsts.MOVE_UP: perception[AgentConsts.NEIGHBORHOOD_DIST_UP] if perception[AgentConsts.NEIGHBORHOOD_UP] in obstaculos else 100.0,
+            AgentConsts.MOVE_DOWN: perception[AgentConsts.NEIGHBORHOOD_DIST_DOWN] if perception[AgentConsts.NEIGHBORHOOD_DOWN] in obstaculos else 100.0,
+            AgentConsts.MOVE_RIGHT: perception[AgentConsts.NEIGHBORHOOD_DIST_RIGHT] if perception[AgentConsts.NEIGHBORHOOD_RIGHT] in obstaculos else 100.0,
+            AgentConsts.MOVE_LEFT: perception[AgentConsts.NEIGHBORHOOD_DIST_LEFT] if perception[AgentConsts.NEIGHBORHOOD_LEFT] in obstaculos else 100.0
+        }
+
+        opuestos = {
+            AgentConsts.MOVE_UP: AgentConsts.MOVE_DOWN,
+            AgentConsts.MOVE_DOWN: AgentConsts.MOVE_UP,
+            AgentConsts.MOVE_RIGHT: AgentConsts.MOVE_LEFT,
+            AgentConsts.MOVE_LEFT: AgentConsts.MOVE_RIGHT,
+            AgentConsts.NO_MOVE: AgentConsts.NO_MOVE
+        }
 
         movimientos_validos = []
+        if perception[AgentConsts.NEIGHBORHOOD_UP] not in obstaculos or distancias[AgentConsts.MOVE_UP] > 0.8: movimientos_validos.append(AgentConsts.MOVE_UP)
+        if perception[AgentConsts.NEIGHBORHOOD_DOWN] not in obstaculos or distancias[AgentConsts.MOVE_DOWN] > 0.8: movimientos_validos.append(AgentConsts.MOVE_DOWN)
+        if perception[AgentConsts.NEIGHBORHOOD_RIGHT] not in obstaculos or distancias[AgentConsts.MOVE_RIGHT] > 0.8: movimientos_validos.append(AgentConsts.MOVE_RIGHT)
+        if perception[AgentConsts.NEIGHBORHOOD_LEFT] not in obstaculos or distancias[AgentConsts.MOVE_LEFT] > 0.8: movimientos_validos.append(AgentConsts.MOVE_LEFT)
 
-        if perception[AgentConsts.NEIGHBORHOOD_UP] not in obstaculos:
-            movimientos_validos.append(AgentConsts.MOVE_UP)
+        opciones_sin_retorno = [m for m in movimientos_validos if m != opuestos.get(self.action, AgentConsts.NO_MOVE)]
+        opciones_finales = opciones_sin_retorno if opciones_sin_retorno else movimientos_validos
 
-        if perception[AgentConsts.NEIGHBORHOOD_DOWN] not in obstaculos:
-            movimientos_validos.append(AgentConsts.MOVE_DOWN)
-
-        if perception[AgentConsts.NEIGHBORHOOD_RIGHT] not in obstaculos:
-            movimientos_validos.append(AgentConsts.MOVE_RIGHT)
-
-        if perception[AgentConsts.NEIGHBORHOOD_LEFT] not in obstaculos:
-            movimientos_validos.append(AgentConsts.MOVE_LEFT)
-
-        if movimientos_validos:
-            if self.action in movimientos_validos and random.random() < 0.85:
-                pass
-            else:
-                self.action = random.choice(movimientos_validos)
+        if self.action in opciones_finales:
+            pass # Seguimos nuestra inercia actual sin mirar atrás
+        elif opciones_finales:
+            # Elegimos el pasillo más largo
+            self.action = max(opciones_finales, key=lambda m: distancias[m])
         else:
             self.action = AgentConsts.NO_MOVE
-
+                
         return self.action, False
     
     def Transit(self,perception, map):
@@ -58,8 +68,10 @@ class Explorar(State):
         ]
 
         if AgentConsts.SHELL in entorno:
-            return "Esquivar"
-        
+            if perception[AgentConsts.CAN_FIRE] == 1:
+                return "Disparar"
+            else:
+                return "Esquivar"
         if AgentConsts.PLAYER in entorno or AgentConsts.COMMAND_CENTER in entorno:
             return "Disparar"
 
