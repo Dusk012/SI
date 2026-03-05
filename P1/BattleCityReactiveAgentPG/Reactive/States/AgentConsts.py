@@ -17,11 +17,9 @@ class AgentConsts:
     HEALTH = 15
     LIFE_X = 16
     LIFE_Y = 17
-    TIME = 18
     EXIT_X = 18
     EXIT_Y = 19 # Se olvidaron de meter estas constantes?
     TIME = 20
-
     #movimientos
     NO_MOVE = 0
     MOVE_UP = 1

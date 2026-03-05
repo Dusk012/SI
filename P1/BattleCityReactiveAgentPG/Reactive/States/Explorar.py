@@ -63,7 +63,7 @@ class Explorar(State):
     
     def Transit(self,perception, map):
         # El jugador o el command center han muerto
-        if perception[AgentConsts.PLAYER_X] < 0 or perception[AgentConsts.COMMAND_CENTER_X < 0] < 0:
+        if perception[AgentConsts.PLAYER_X] < 0 or perception[AgentConsts.COMMAND_CENTER_X] < 0:
             return "BuscarSalida"
         
         entorno = [
