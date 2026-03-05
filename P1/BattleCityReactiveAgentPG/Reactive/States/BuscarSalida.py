@@ -17,12 +17,13 @@ class BuscarSalida(State):
             AgentConsts.COMMAND_CENTER,
             AgentConsts.SEMI_UNBREKABLE
         ]
-        
+
         obstaculos_blandos = [
             AgentConsts.BRICK,
             AgentConsts.SEMI_BREKABLE
         ]
         
+        # Coordenadas mias y de la salida (estrella)
         mi_x = perception[AgentConsts.AGENT_X]
         mi_y = perception[AgentConsts.AGENT_Y]
         salida_x = perception[AgentConsts.EXIT_X]
@@ -44,17 +45,20 @@ class BuscarSalida(State):
         }
         
         movimiento_ideal = AgentConsts.NO_MOVE
+        # Hago calculos para ver si me interesa ir hacia arriba o abajo, o bien hacia la izquierda o derecha
         if abs(salida_x - mi_x) > abs(salida_y - mi_y):
             movimiento_ideal = AgentConsts.MOVE_LEFT if mi_x > salida_x else AgentConsts.MOVE_RIGHT
         else:
             movimiento_ideal = AgentConsts.MOVE_DOWN if mi_y > salida_y else AgentConsts.MOVE_UP
 
+        # Un movimiento valido es un camino que no tenga obstaculos duros
         movimientos_validos = []
         if perception[AgentConsts.NEIGHBORHOOD_UP] not in obstaculos_duros or distancias[AgentConsts.MOVE_UP] > 0.8: movimientos_validos.append(AgentConsts.MOVE_UP)
         if perception[AgentConsts.NEIGHBORHOOD_DOWN] not in obstaculos_duros or distancias[AgentConsts.MOVE_DOWN] > 0.8: movimientos_validos.append(AgentConsts.MOVE_DOWN)
         if perception[AgentConsts.NEIGHBORHOOD_RIGHT] not in obstaculos_duros or distancias[AgentConsts.MOVE_RIGHT] > 0.8: movimientos_validos.append(AgentConsts.MOVE_RIGHT)
         if perception[AgentConsts.NEIGHBORHOOD_LEFT] not in obstaculos_duros or distancias[AgentConsts.MOVE_LEFT] > 0.8: movimientos_validos.append(AgentConsts.MOVE_LEFT)
 
+        # Misma logica que en explorar, busca caminos que no sea retroceder
         opciones_sin_retorno = [m for m in movimientos_validos if m != opuestos.get(self.action, AgentConsts.NO_MOVE)]
         opciones_finales = opciones_sin_retorno if opciones_sin_retorno else movimientos_validos
 
