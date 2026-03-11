@@ -39,7 +39,7 @@ class Explorar(State):
             AgentConsts.NO_MOVE: AgentConsts.NO_MOVE
         }
 
-        # Un movimiento valido es aquel que no tiene obstaculos y el camino es suficientemente largo
+        # Un movimiento valido es aquel que no tiene obstaculos o el camino es suficientemente largo
         movimientos_validos = []
         if perception[AgentConsts.NEIGHBORHOOD_UP] not in obstaculos or distancias[AgentConsts.MOVE_UP] > 0.8: movimientos_validos.append(AgentConsts.MOVE_UP)
         if perception[AgentConsts.NEIGHBORHOOD_DOWN] not in obstaculos or distancias[AgentConsts.MOVE_DOWN] > 0.8: movimientos_validos.append(AgentConsts.MOVE_DOWN)
@@ -47,13 +47,14 @@ class Explorar(State):
         if perception[AgentConsts.NEIGHBORHOOD_LEFT] not in obstaculos or distancias[AgentConsts.MOVE_LEFT] > 0.8: movimientos_validos.append(AgentConsts.MOVE_LEFT)
 
         # Busco caminos que no sea volver por donde vine
-        opciones_sin_retorno = [m for m in movimientos_validos if m != opuestos.get(self.action, AgentConsts.NO_MOVE)]
+        opciones_sin_retorno = [m for m in movimientos_validos if m != opuestos.get(self.action, AgentConsts.NO_MOVE)] # Si m no es justo MI movimiento opuesto
         # Si hay posibilidad de seguir, sigo, en caso contrario retrocedo
         opciones_finales = opciones_sin_retorno if opciones_sin_retorno else movimientos_validos
 
+        # Si el camino que estamos tomando ahora mismo esta entre las opciones finales
         if self.action in opciones_finales:
             pass # Seguimos nuestra inercia actual sin mirar atrás
-        elif opciones_finales:
+        elif opciones_finales: # Si no esta entre esas opciones y tenemos opciones finales (no implica retroceder)
             # Elegimos el pasillo más largo
             self.action = max(opciones_finales, key=lambda m: distancias[m])
         else:

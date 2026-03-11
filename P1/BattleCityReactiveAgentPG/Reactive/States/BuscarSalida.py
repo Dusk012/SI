@@ -51,7 +51,7 @@ class BuscarSalida(State):
         else:
             movimiento_ideal = AgentConsts.MOVE_DOWN if mi_y > salida_y else AgentConsts.MOVE_UP
 
-        # Un movimiento valido es un camino que no tenga obstaculos duros
+        # Un movimiento valido es un camino que no tenga obstaculos duros o tengamos una minima distancia
         movimientos_validos = []
         if perception[AgentConsts.NEIGHBORHOOD_UP] not in obstaculos_duros or distancias[AgentConsts.MOVE_UP] > 0.8: movimientos_validos.append(AgentConsts.MOVE_UP)
         if perception[AgentConsts.NEIGHBORHOOD_DOWN] not in obstaculos_duros or distancias[AgentConsts.MOVE_DOWN] > 0.8: movimientos_validos.append(AgentConsts.MOVE_DOWN)
@@ -67,6 +67,7 @@ class BuscarSalida(State):
         elif self.action in opciones_finales:
             pass 
         elif opciones_finales:
+            # Elegimos el pasillo mas largo
             self.action = max(opciones_finales, key=lambda m: distancias[m])
         else:
             self.action = AgentConsts.NO_MOVE
@@ -80,8 +81,11 @@ class BuscarSalida(State):
             AgentConsts.MOVE_LEFT: AgentConsts.NEIGHBORHOOD_LEFT
         }
         
+        # Si me muevo en cualquier direccion (no quedarme quieto)
         if self.action in direccion_a_sensor:
+            # Tomo nota de la direccion a la que estoy mirando (moviendo)
             sensor = direccion_a_sensor[self.action]
+            # Si en la direccion que estoy apuntando hay un obstaculo blando y puedo dispararlo, entonces le disparo
             if perception[sensor] in obstaculos_blandos and perception[AgentConsts.CAN_FIRE] == 1:
                 shot = True
 

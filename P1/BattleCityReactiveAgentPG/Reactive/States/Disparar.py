@@ -61,12 +61,14 @@ class Disparar(State):
             AgentConsts.MOVE_LEFT: AgentConsts.NEIGHBORHOOD_LEFT
         }
         
+        # Direccion a la que estoy apuntando (nombre muy malo, lo siento...)
         sensor_apuntando = direccion_a_sensor.get(self.action, -1)
         peligro_flanco = False
         
+        # Array de direcciones
         sensores = [AgentConsts.NEIGHBORHOOD_UP, AgentConsts.NEIGHBORHOOD_DOWN, AgentConsts.NEIGHBORHOOD_RIGHT, AgentConsts.NEIGHBORHOOD_LEFT]
         
-        # Si detecto en alguna direccion una bala y no la estoy apuntando, estoy en peligro
+        # Miro en las 4 direcciones, si en alguna de ellas hay bala y NO estoy apuntando a dicha bala, estoy en peligro.
         for sensor in sensores:
             if perception[sensor] == AgentConsts.SHELL and sensor != sensor_apuntando:
                 peligro_flanco = True
